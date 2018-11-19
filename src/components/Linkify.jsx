@@ -13,6 +13,7 @@ type Props = {
   hrefDecorator: (string) => string,
   matchDecorator: (string) => Array<Object>,
   textDecorator: (string) => string,
+  onClick?: () => void 
 };
 
 class Linkify extends React.Component<Props, {}> {
@@ -22,6 +23,13 @@ class Linkify extends React.Component<Props, {}> {
     matchDecorator: defaultMatchDecorator,
     textDecorator: defaultTextDecorator,
   };
+
+  onClick = (link: string) => e => {
+    const {onClick} = this.props;
+    if (!onClick) return; 
+    e.preventDefault(); 
+    onClick(link)
+  }
 
   parseString(string: string) {
     if (string === '') {
@@ -43,7 +51,7 @@ class Linkify extends React.Component<Props, {}> {
 
       const decoratedHref = this.props.hrefDecorator(match.url);
       const decoratedText = this.props.textDecorator(match.text);
-      const decoratedComponent = this.props.componentDecorator(decoratedHref, decoratedText, i);
+      const decoratedComponent = this.props.componentDecorator(decoratedHref, decoratedText, i, this.onClick(decoratedText));
       elements.push(decoratedComponent);
 
       lastIndex = match.lastIndex;
